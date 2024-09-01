@@ -1,0 +1,32 @@
+%% Clearing Workspace and Command Window
+clc
+clear
+close all
+
+%% Importing Data
+[credit,efficiency,time,total_hour]=data;
+nprocess=length(credit); 
+lb=zeros(1,nprocess); %lower bound
+ub=time'; %upper bound
+prob=@TaskAllocation; %fitness function
+Np=50;T=100; %Algorithm Parameters
+NRuns = 5;   
+
+%% Execution of Algorithm
+bestsol = NaN(NRuns,length(lb)); %bestsolution vector for N runs
+bestfitness = NaN(NRuns,1);  %bestfitness for each run
+BestFitIter = NaN(NRuns,T+1); %bestfitness values of each iteration corresponding to each run%%
+for i = 1:NRuns
+    rng(i,'twister')
+    etac=20;etam=20;Pc=0.8;Pm=0.2;
+    [bestsol(i,:),bestfitness(i,1),BestFitIter(i,:)] = GA(prob,lb,ub,Np,T,etac,etam,Pc,Pm);
+    plot(BestFitIter(i,:),'*')
+    hold on
+end
+[value,ind]=min(bestfitness);
+best=bestsol(ind,:);
+figure();
+stem(best, 'filled', 'MarkerSize', 8, 'Color', 'red');
+figure();
+plot(bestfitness);
+disp(bestfitness);
